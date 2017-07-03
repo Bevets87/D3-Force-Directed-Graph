@@ -1,0 +1,19 @@
+@import url("https://fonts.googleapis.com/css?family=Lobster");
+html, body {
+  background: linear-gradient(#70e1f5, #ffd194);
+  height: 100vh;
+  width: auto;
+  padding: 0;
+  margin: 0; }
+  html h1, body h1 {
+    text-align: center;
+    font-family: 'Lobster', cursive;
+    color: #c05b4d;
+    font-size: 55px;
+    margin-top: 5px; }
+
+#app {
+  text-align: center;
+  margin: 0 auto; }
+  #app svg {
+    overflow: visible; }
