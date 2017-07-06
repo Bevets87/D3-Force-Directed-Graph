@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Lobster");
 html, body {
   background: linear-gradient(#70e1f5, #ffd194);
-  height: 100vh;
+  min-height: 100vh;
   width: auto;
   padding: 0;
   margin: 0; }
@@ -11,9 +11,16 @@ html, body {
     color: #c05b4d;
     font-size: 55px;
     margin-top: 5px; }
+    @media (max-width: 768px) {
+      html h1, body h1 {
+        font-size: 45px; } }
 
 #app {
   text-align: center;
   margin: 0 auto; }
   #app svg {
-    overflow: visible; }
+    overflow: visible;
+    margin-top: 50px; }
+    @media (max-width: 768px) {
+      #app svg {
+        margin-top: 100px; } }

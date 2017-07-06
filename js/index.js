@@ -1,27 +1,26 @@
 (function (d3) {
 
   'use strict'
-  const h = 600
-  const w = 800
   const url = 'https://raw.githubusercontent.com/DealPete/forceDirected/master/countries.json'
 
-  const app = d3.select('body').append('div')
-  .attr('id', 'app');
+  const getDataSet = function (url, drawSVG, dimensions) {
+    d3.json(url, function (error, dataset) {
+      if (error) throw error;
+      drawSVG(dataset, dimensions)
+    })
+  }
+  const drawSVG = function (dataset, dimensions) {
+    const h = dimensions.height
+    const w = dimensions.width
 
-  const svg = d3.select('#app')
-  .append('svg')
-  .attr('width', w)
-  .attr('height', h)
-  .append('g')
+    d3.select('#app').selectAll("*").remove();
+    const svg = d3.select('#app')
+    .append('svg')
+    .attr('width', w)
+    .attr('height', h)
+    .append('g')
 
-  app.append('title')
-  .text('Force-Directed Layout of National Contiguity')
-
-
-  d3.json(url, function(error, dataset) {
-    if (error) throw error;
-
-    var simulation = d3.forceSimulation()
+    const simulation = d3.forceSimulation()
     .force('link', d3.forceLink().id((d) => d.index))
     .force('charge', d3.forceManyBody().strength(-80).distanceMax(-60))
     .force('center', d3.forceCenter(w /2, h / 2))
@@ -31,7 +30,7 @@
     .selectAll('line')
     .data(dataset.links)
     .enter().append('line')
-    .attr('stroke','#CCC');
+    .attr('stroke','black');
 
     const node = svg.append('g')
     .selectAll('image')
@@ -46,7 +45,6 @@
       .on('drag', dragged)
       .on('end', dragended)
     );
-
     node.append('title')
     .text(function (d) { return d.country; });
 
@@ -60,33 +58,58 @@
 
     function ticked () {
       link
-        .attr('x1', function(d) { return d.source.x; })
-        .attr('y1', function(d) { return d.source.y;  })
-        .attr('x2', function(d) { return d.target.x;  })
-        .attr('y2', function(d) { return d.target.y;  });
+      .attr('x1', function(d) { return d.source.x; })
+      .attr('y1', function(d) { return d.source.y;  })
+      .attr('x2', function(d) { return d.target.x;  })
+      .attr('y2', function(d) { return d.target.y;  });
       node
-        .attr('x',function(d) {return d.x })
-  			.attr('y',function(d) {return  d.y });
+      .attr('x',function(d) {return d.x })
+      .attr('y',function(d) {return  d.y });
     }
 
     function dragstarted (d) {
       if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
+      d.fx = d.x;
+      d.fy = d.y;
     }
 
     function dragged (d) {
       d.fx = d3.event.x;
       d.fy = d3.event.y;
     }
-
     function dragended (d) {
       if (!d3.event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
+      d.fx = null;
+      d.fy = null;
     }
 
-  })
+  }
+
+window.addEventListener('orientationchange', function () {
+  if (screen.orientation.angle === 90) {
+    getDataSet(url, drawSVG, {width: 600, height: 400})
+  } else {
+    getDataSet(url, drawSVG, {width: 350, height: 350})
+  }
+})
+window.addEventListener('load', function () {
+  if (this.innerWidth < 1000 && this.innerWidth >= 600) {
+    getDataSet(url, drawSVG, {width: 600, height: 400})
+  } else if (this.innerWidth < 600) {
+    getDataSet(url, drawSVG, {width: 300, height: 300})
+  } else {
+    getDataSet(url, drawSVG, {width: 800, height: 500})
+  }
+})
+window.addEventListener('resize', function () {
+  if (this.innerWidth < 1000 && this.innerWidth >= 600) {
+    getDataSet(url, drawSVG, {width: 600, height: 400})
+  } else if (this.innerWidth < 600) {
+    getDataSet(url, drawSVG, {width: 300, height: 300})
+  } else {
+    getDataSet(url, drawSVG, {width: 800, height: 500})
+  }
+})
 
 
 }(d3))
