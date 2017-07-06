@@ -3,12 +3,15 @@
   'use strict'
   const url = 'https://raw.githubusercontent.com/DealPete/forceDirected/master/countries.json'
 
-  const getDataSet = function (url, drawSVG, dimensions) {
-    d3.json(url, function (error, dataset) {
-      if (error) throw error;
-      drawSVG(dataset, dimensions)
+  const getData = function (url) {
+    return new Promise (function (resolve, reject) {
+      d3.json(url, function (error, dataset) {
+        if (error) reject(error);
+        resolve(dataset)
+      })
     })
   }
+
   const drawSVG = function (dataset, dimensions) {
     const h = dimensions.height
     const w = dimensions.width
@@ -82,34 +85,35 @@
       d.fx = null;
       d.fy = null;
     }
-
   }
 
-window.addEventListener('orientationchange', function () {
-  if (screen.orientation.angle === 90) {
-    getDataSet(url, drawSVG, {width: 600, height: 400})
-  } else {
-    getDataSet(url, drawSVG, {width: 350, height: 350})
-  }
-})
-window.addEventListener('load', function () {
-  if (this.innerWidth < 1000 && this.innerWidth >= 600) {
-    getDataSet(url, drawSVG, {width: 600, height: 400})
-  } else if (this.innerWidth < 600) {
-    getDataSet(url, drawSVG, {width: 300, height: 300})
-  } else {
-    getDataSet(url, drawSVG, {width: 800, height: 500})
-  }
-})
-window.addEventListener('resize', function () {
-  if (this.innerWidth < 1000 && this.innerWidth >= 600) {
-    getDataSet(url, drawSVG, {width: 600, height: 400})
-  } else if (this.innerWidth < 600) {
-    getDataSet(url, drawSVG, {width: 300, height: 300})
-  } else {
-    getDataSet(url, drawSVG, {width: 800, height: 500})
-  }
-})
+  getData(url).then(function (data) {
+    if (window.innerWidth < 1000 && window.innerWidth >= 600) {
+      drawSVG(data ,{width: 600, height: 400})
+    } else if (window.innerWidth < 600) {
+      drawSVG(data, {width: 300, height: 300})
+    } else {
+      drawSVG(data, {width: 800, height: 500})
+    }
+    window.addEventListener('orientationchange', function () {
+      if (screen.orientation.angle === 90) {
+        drawSVG(data, {width: 600, height: 400})
+      } else {
+        drawSVG(data, {width: 350, height: 350})
+      }
+    })
+    window.addEventListener('resize', function () {
+      if (this.innerWidth < 1000 && this.innerWidth >= 600) {
+        drawSVG(data, {width: 600, height: 400})
+      } else if (this.innerWidth < 600) {
+        drawSVG(data, {width: 300, height: 300})
+      } else {
+        drawSVG(data, {width: 800, height: 500})
+      }
+    })
+  })
+
+
 
 
 }(d3))
